@@ -5,6 +5,7 @@ package example.kotlinplayground
 
 // 色々な値オブジェクトを見ていきましょう！ ＼＼\\٩( 'ω' )و //／／
 
+// -------------------------------------------------------------------------
 /*
 CASE1: data class, varプロパティ, init
 
@@ -22,8 +23,8 @@ varなので再代入が可能。(不変でなくなってしまう。値自体�
 //	val userName1 = UserName("　谷田 一樹　")
 //	println(userName1.value) // 谷田 一樹
 //
-//	userName1.value = "　Kotlin 太郎　"
-//	println(userName1.value) // 　Kotlin 太郎　
+//	userName1.value = "　谷田 一樹　"
+//	println(userName1.value) // 　谷田 一樹　
 //}
 
 // -------------------------------------------------------------------------
@@ -44,9 +45,40 @@ CASE2: data class, valプロパティ, init
 
 // -------------------------------------------------------------------------
 /*
-CASE3: value class(inline class), private constructor, operator invoke
+CASE3: data class, private constructor, valプロパティ
 
-varは使えないので再代入される心配はない。
+1つの値のためにpropertyを二つ用意している。
+private constructorでprimary constructor呼び出しでインスタンス生成させない様にしたが、
+data classはcopyでprivate constructorを公開してしまう問題がある。
+↓
+Private primary constructor is exposed
+via the generated 'copy()' method of a 'data' class.
+*/
+
+data class UserName private constructor(val value: String?) {
+    companion object {
+        operator fun invoke(value: String?): UserName {
+            return UserName(
+                value = value?.let { it.ifBlank { null }?.trim() }
+            )
+        }
+    }
+}
+
+fun main() {
+    val userName1 = UserName("　谷田 一樹　")
+    println(userName1.value) // 谷田 一樹
+
+    val userName2 = userName1.copy("　谷田 一樹　")
+    println(userName2.value) // 　谷田 一樹　
+}
+
+// -------------------------------------------------------------------------
+/*
+CASE4: value class(inline class), private constructor, operator invoke
+
+varは使えないので再代入される心配は無い。
+value classはcopyメソッドが無いのでprivate constructorを公開することは無い。
 実際はラインタイム時にUserNameクラスのインスタンスは作成されず、Stringとして扱われるのでオーバーヘッドが少ない。
 */
 
@@ -65,3 +97,6 @@ varは使えないので再代入される心配はない。
 //	val userName = UserName("　谷田 一樹　")
 //	println(userName.value) // "谷田 一樹"
 //}
+
+// -------------------------------------------------------------------------
+//ただ、value classは一部のJSONシリアライズライブラリやmockitoなどが対応していないこともあるらしい...
