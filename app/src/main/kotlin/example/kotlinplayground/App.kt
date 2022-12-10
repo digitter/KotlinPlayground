@@ -55,23 +55,23 @@ Private primary constructor is exposed
 via the generated 'copy()' method of a 'data' class.
 */
 
-data class UserName private constructor(val value: String?) {
-    companion object {
-        operator fun invoke(value: String?): UserName {
-            return UserName(
-                value = value?.let { it.ifBlank { null }?.trim() }
-            )
-        }
-    }
-}
-
-fun main() {
-    val userName1 = UserName("　谷田 一樹　")
-    println(userName1.value) // 谷田 一樹
-
-    val userName2 = userName1.copy("　谷田 一樹　")
-    println(userName2.value) // 　谷田 一樹　
-}
+//data class UserName private constructor(val value: String?) {
+//    companion object {
+//        operator fun invoke(value: String?): UserName {
+//            return UserName(
+//                value = value?.let { it.ifBlank { null }?.trim() }
+//            )
+//        }
+//    }
+//}
+//
+//fun main() {
+//    val userName1 = UserName("　谷田 一樹　")
+//    println(userName1.value) // 谷田 一樹
+//
+//    val userName2 = userName1.copy("　谷田 一樹　")
+//    println(userName2.value) // 　谷田 一樹　
+//}
 
 // -------------------------------------------------------------------------
 /*
